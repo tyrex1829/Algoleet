@@ -1,20 +1,29 @@
-// import { useState } from 'react'
 import { useEffect } from "react";
 import "./App.css";
 import Signin from "./components/Signin";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "./utils/firebase";
+import { useSetRecoilState } from "recoil";
+import { userAtom } from "./store/atoms/user";
 
 const auth = getAuth(app);
 
 function App() {
-  // const [count, setCount] = useState(0)
+  const setUser = useSetRecoilState(userAtom);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log(`This is the user: ${user}`);
+      if (user && user.email) {
+        setUser({
+          loading: false,
+          user: {
+            email: user.email,
+          },
+        });
       } else {
+        setUser({
+          loading: false,
+        });
         console.log(`There is no logged in user`);
       }
     });
