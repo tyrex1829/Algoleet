@@ -3,13 +3,21 @@ import "./App.css";
 import Signin from "./components/Signin";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "./utils/firebase";
-import { useSetRecoilState } from "recoil";
+import { RecoilRoot, useRecoilState } from "recoil";
 import { userAtom } from "./store/atoms/user";
 
-const auth = getAuth(app);
+export const auth = getAuth(app);
 
 function App() {
-  const setUser = useSetRecoilState(userAtom);
+  return (
+    <RecoilRoot>
+      <StoreApp />
+    </RecoilRoot>
+  );
+}
+
+function StoreApp() {
+  const [user, setUser] = useRecoilState(userAtom);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -27,12 +35,24 @@ function App() {
         console.log(`There is no logged in user`);
       }
     });
-  });
+  }, []);
+
+  if (user.loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user.user) {
+    return (
+      <div>
+        <Signin />
+      </div>
+    );
+  }
 
   return (
     <>
       <h1 className="text-3xl mb-8">Leetcode clone - AlgoLeet</h1>
-      <Signin />
+      You are logged in as {user.user?.email}
     </>
   );
 }

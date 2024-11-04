@@ -1,7 +1,8 @@
-import { getAuth, sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
+import { sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
 import { app } from "../utils/firebase";
 import { GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../App.tsx";
 
 const actionCodeSettings = {
   url: "http://localhost:5173",
@@ -9,7 +10,6 @@ const actionCodeSettings = {
 };
 
 const Signin = () => {
-  const auth = getAuth(app);
   const [email, setEmail] = useState("");
 
   async function onGoogleSignin() {
