@@ -14,11 +14,13 @@ const Signin = () => {
 
   async function onGoogleSignin() {
     const provider = new GoogleAuthProvider();
-    provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     try {
       const result = await signInWithPopup(auth, provider);
       // This gives you a Google Access Token for accessing the Google API
       const credential = GoogleAuthProvider.credentialFromResult(result);
+      if (!credential) {
+        return;
+      }
       const token = credential.accessToken;
       const user = result.user;
 
@@ -73,7 +75,7 @@ const Signin = () => {
           onGoogleSignin();
         }}
       >
-        Signup with Google
+        Login with Google
       </button>
     </div>
   );
