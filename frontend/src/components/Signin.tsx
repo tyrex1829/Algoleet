@@ -1,6 +1,7 @@
-import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
+import { getAuth, sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
 import { app } from "../utils/firebase";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const actionCodeSettings = {
   url: "http://localhost:5173",
@@ -10,6 +11,28 @@ const actionCodeSettings = {
 const Signin = () => {
   const auth = getAuth(app);
   const [email, setEmail] = useState("");
+
+  async function onGoogleSignin() {
+    const provider = new GoogleAuthProvider();
+    provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // This gives you a Google Access Token for accessing the Google API
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      const user = result.user;
+
+      console.log("User signed in with Google:", user);
+    } catch (error) {
+      console.error("Error during Google sign-in:", error);
+      alert("Google sign-in failed. Please try again.");
+
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData.email;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+    }
+  }
 
   async function onSignin() {
     if (!email) {
@@ -36,12 +59,21 @@ const Signin = () => {
           setEmail(e.target.value);
         }}
       />
+      <br />
       <button
         onClick={() => {
           onSignin();
         }}
       >
         Signup
+      </button>
+      <br />
+      <button
+        onClick={() => {
+          onGoogleSignin();
+        }}
+      >
+        Signup with Google
       </button>
     </div>
   );

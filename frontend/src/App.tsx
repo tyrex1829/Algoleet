@@ -7,8 +7,8 @@ function App() {
 
   return (
     <>
+      <h1 className="text-3xl mb-8">Leetcode clone - AlgoLeet</h1>
       <Signin />
-      <h1>Leetcode clone - AlgoLeet</h1>
     </>
   );
 }
